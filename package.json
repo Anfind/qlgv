@@ -1,0 +1,33 @@
+{
+  "name": "teacher-management-system",
+  "version": "1.0.0",
+  "description": "Hệ thống quản lý thông tin giáo viên - MERN Stack",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\"",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "test": "cd client && npm test"
+  },
+  "keywords": [
+    "teacher",
+    "management",
+    "mern",
+    "react",
+    "nodejs",
+    "mongodb",
+    "express",
+    "education"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/qlgv.git"
+  },
+  "homepage": "https://github.com/yourusername/qlgv#readme"
+}

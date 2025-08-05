@@ -11,6 +11,7 @@ import TeacherListPage from './pages/teacher/TeacherListPage';
 import TeacherFormPage from './pages/teacher/TeacherFormPage';
 import PositionManagementPage from './pages/position/PositionManagementPage';
 import Dashboard from './pages/Dashboard';
+import NotFound from './components/common/NotFound';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/teachers/create" element={<TeacherFormPage />} />
             <Route path="/teachers/edit/:id" element={<TeacherFormPage />} />
             <Route path="/positions" element={<PositionManagementPage />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
       </Router>

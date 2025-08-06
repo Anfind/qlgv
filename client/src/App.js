@@ -1,8 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
-import viVN from 'antd/lib/locale/vi_VN';
-import 'antd/dist/reset.css';
+import viVN from 'antd/locale/vi_VN';
 import './App.css';
 
 // Components

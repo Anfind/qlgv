@@ -3,8 +3,8 @@
     "$oid": "670b2ded6dce2acd384c6c5f"
   },
   "code": "TTS",
-  "des": "Giáo viên thực tập sinh tại trường",
-  "isActive": true,
+    "des": "Giáo viên thực tập sinh tại trường",
+    "isActive": true,
   "isDeleted": true,
   "name": "Thực tập sinh",
   "createdAt": {

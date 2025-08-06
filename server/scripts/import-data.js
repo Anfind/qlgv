@@ -29,29 +29,47 @@ const importData = async () => {
 
         // Import Users
         console.log('👥 Importing users...');
-        const cleanedUsers = usersData
-            .filter(user => user._id && user._id.$oid) // Lọc bỏ các object rỗng
-            .map(user => ({
+        const userImports = [];
+        
+        for (let i = 0; i < usersData.length; i++) {
+            const user = usersData[i];
+            if (!user._id || !user._id.$oid) continue;
+            
+            // Generate email if missing
+            let email = user.email;
+            if (!email) {
+                if (user.role === 'ADMIN') {
+                    email = `admin${i + 1}@school.edu.vn`;
+                } else if (user.role === 'TEACHER') {
+                    email = `teacher${i + 1}@school.edu.vn`;
+                } else {
+                    email = `student${i + 1}@school.edu.vn`;
+                }
+                console.log(`📧 Generated email for ${user.name}: ${email}`);
+            }
+            
+            userImports.push({
                 _id: new mongoose.Types.ObjectId(user._id.$oid),
                 name: user.name,
-                email: user.email,
+                email: email,
                 phoneNumber: user.phoneNumber,
                 address: user.address,
                 identity: user.identity,
                 dob: user.dob ? new Date(user.dob.$date) : undefined,
                 avatar: user.avatar,
                 role: user.role || 'TEACHER',
-                isDeleted: user.isDeleted || false,
+                isDeleted: false, // Set to false to have test data
                 createdAt: user.createdAt ? new Date(user.createdAt.$date) : new Date(),
                 updatedAt: user.updatedAt ? new Date(user.updatedAt.$date) : new Date()
-            }));
+            });
+        }
 
-        const insertedUsers = await User.insertMany(cleanedUsers);
+        const insertedUsers = await User.insertMany(userImports);
         console.log(`✅ Imported ${insertedUsers.length} users`);
 
         // Import Teacher Positions
         console.log('📋 Importing teacher positions...');
-        const cleanedPositions = positionsData
+        const positionImports = positionsData
             .filter(position => position._id && position._id.$oid)
             .map(position => ({
                 _id: new mongoose.Types.ObjectId(position._id.$oid),
@@ -59,34 +77,42 @@ const importData = async () => {
                 code: position.code,
                 des: position.des,
                 isActive: position.isActive !== undefined ? position.isActive : true,
-                isDeleted: position.isDeleted || false,
+                isDeleted: false, // Set to false to have test data
                 createdAt: position.createdAt ? new Date(position.createdAt.$date) : new Date(),
                 updatedAt: position.updatedAt ? new Date(position.updatedAt.$date) : new Date()
             }));
 
-        const insertedPositions = await TeacherPosition.insertMany(cleanedPositions);
+        const insertedPositions = await TeacherPosition.insertMany(positionImports);
         console.log(`✅ Imported ${insertedPositions.length} teacher positions`);
 
         // Import Teachers
         console.log('👨‍🏫 Importing teachers...');
-        const cleanedTeachers = teachersData
+        const teacherImports = teachersData
             .filter(teacher => teacher._id && teacher._id.$oid && teacher.userId && teacher.userId.$oid)
-            .map(teacher => ({
-                _id: new mongoose.Types.ObjectId(teacher._id.$oid),
-                userId: new mongoose.Types.ObjectId(teacher.userId.$oid),
-                teacherPositionsId: teacher.teacherPositionsId ? 
-                    teacher.teacherPositionsId.map(pos => new mongoose.Types.ObjectId(pos.$oid)) : [],
-                isActive: teacher.isActive !== undefined ? teacher.isActive : true,
-                isDeleted: teacher.isDeleted || false,
-                code: teacher.code,
-                startDate: teacher.startDate ? new Date(teacher.startDate.$date) : new Date(),
-                endDate: teacher.endDate ? new Date(teacher.endDate.$date) : undefined,
-                degrees: teacher.degrees || [],
-                createdAt: teacher.createdAt ? new Date(teacher.createdAt.$date) : new Date(),
-                updatedAt: teacher.updatedAt ? new Date(teacher.updatedAt.$date) : new Date()
-            }));
+            .map(teacher => {
+                // Clean degrees array to remove nested _id fields
+                const cleanedDegrees = teacher.degrees ? teacher.degrees.map(degree => {
+                    const { _id, ...cleanDegree } = degree;
+                    return cleanDegree;
+                }) : [];
+                
+                return {
+                    _id: new mongoose.Types.ObjectId(teacher._id.$oid),
+                    userId: new mongoose.Types.ObjectId(teacher.userId.$oid),
+                    teacherPositionsId: teacher.teacherPositionsId ? 
+                        teacher.teacherPositionsId.map(pos => new mongoose.Types.ObjectId(pos.$oid)) : [],
+                    isActive: teacher.isActive !== undefined ? teacher.isActive : true,
+                    isDeleted: false, // Set to false to have test data
+                    code: teacher.code,
+                    startDate: teacher.startDate ? new Date(teacher.startDate.$date) : new Date(),
+                    endDate: teacher.endDate ? new Date(teacher.endDate.$date) : undefined,
+                    degrees: cleanedDegrees,
+                    createdAt: teacher.createdAt ? new Date(teacher.createdAt.$date) : new Date(),
+                    updatedAt: teacher.updatedAt ? new Date(teacher.updatedAt.$date) : new Date()
+                };
+            });
 
-        const insertedTeachers = await Teacher.insertMany(cleanedTeachers);
+        const insertedTeachers = await Teacher.insertMany(teacherImports);
         console.log(`✅ Imported ${insertedTeachers.length} teachers`);
 
         // Hiển thị thống kê

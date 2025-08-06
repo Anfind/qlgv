@@ -1,0 +1,11 @@
+# 1. Import dữ liệu từ file JSON
+npm run import:data
+
+# 2. Reset các flag isDeleted về false (để hiện dữ liệu)
+npm run reset:deleted
+
+# 3. Xem dữ liệu đã import
+npm run view:data
+
+# 4. Khởi động server
+npm run dev
